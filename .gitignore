@@ -5,3 +5,14 @@
 *.iml
 *.ipr
 *.iws
+.sessions/
+build.properties
+cops.old/
+cops/
+keystore.jks
+messages
+resources/application-dev.conf
+resources/application.conf
+resources/static/
+uploads/
+users/
