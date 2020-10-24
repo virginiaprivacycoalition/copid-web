@@ -2,7 +2,7 @@ package com.virginiaprivacy.copid.routes
 
 import com.virginiaprivacy.copid.UserSession
 import com.virginiaprivacy.copid.entities.InfoMessage
-import com.virginiaprivacy.copid.entities.messages
+import com.virginiaprivacy.copid.messages
 import com.virginiaprivacy.copid.entities.saveMessages
 import com.virginiaprivacy.copid.respondWithUser
 import io.ktor.application.*
