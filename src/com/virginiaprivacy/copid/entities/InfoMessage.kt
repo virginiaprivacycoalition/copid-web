@@ -1,5 +1,6 @@
 package com.virginiaprivacy.copid.entities
 
+import com.virginiaprivacy.copid.messages
 import io.ktor.http.*
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
@@ -7,7 +8,6 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.time.Instant
-import java.util.concurrent.CopyOnWriteArraySet
 
 @Serializable
 data class InfoMessage(val content: String, val addedBy: String) {
@@ -27,8 +27,6 @@ get() {
         return this
     }
 }
-
-val messages = CopyOnWriteArraySet<InfoMessage>()
 
 private val messagesSerializer = ListSerializer(InfoMessage.serializer())
 

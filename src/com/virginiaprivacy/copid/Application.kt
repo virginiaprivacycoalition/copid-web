@@ -21,16 +21,20 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CopyOnWriteArraySet
 import javax.crypto.spec.SecretKeySpec
 
+data class Prefs(val copsPerPage: Int)
+val log = LoggerFactory.getILoggerFactory().getLogger("default")
 fun log(any: Any) {
-    println(any)
+    log.info(any.toString())
 }
 
 fun main(args: Array<String>) {
@@ -57,6 +61,7 @@ val registry = MetricRegistry()
 @KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
+    System.load(File("libcopdetector.so").absolutePath)
     Cop.loadAll()
     loadUsers()
     loadMessages()
@@ -89,6 +94,9 @@ fun Application.module() {
                 )
             )
             directorySessionStorage(File(".sessions"), cached = true)
+        }
+        cookie<Prefs>("prefs") {
+            cookie.path = "/"
         }
     }
 
@@ -259,13 +267,17 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondWithUser(
     val userSession = call.sessions.get<UserSession>()
     val version = properties["version"]
     val buildDate = properties["buildDate"]
-
+    val statistics = mapOf(
+        "version" to version.toString(),
+        "buildDate" to buildDate.toString(),
+        "copCount" to cops.size,
+        "photoCount" to cops.flatMap { it.photos }.size,
+        *data
+    )
     if (userSession != null) {
-        call.respond(FreeMarkerContent(templateFile, mapOf("user" to userList[userSession.username],
-            "version" to version.toString(), "buildDate" to buildDate.toString(), *data)))
+        call.respond(FreeMarkerContent(templateFile, mapOf("user" to userList[userSession.username]).plus(statistics)))
     } else {
-        call.respond(FreeMarkerContent(templateFile, mapOf("version" to version.toString(),
-            "buildDate" to buildDate.toString(), *data)))
+        call.respond(FreeMarkerContent(templateFile, statistics))
     }
 
 }
@@ -298,3 +310,4 @@ suspend fun InputStream.copyToSuspend(
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
 
+val messages = CopyOnWriteArraySet<InfoMessage>()

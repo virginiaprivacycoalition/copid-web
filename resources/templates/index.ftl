@@ -58,6 +58,19 @@
         </#list>
     </ul>
     </div>
+        <div class="row justify-content-center">
+            <form class="form-inline ">
+                <label for="copsPerPage">Items per page
+                </label>
+                <select class="form-control" name="copsPerPage" id="copsPerPage">
+                    <option selected>4</option>
+                    <option>10</option>
+                    <option>20</option>
+                    <option>50</option>
+                </select>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" formmethod="post" formaction="/cops/${page}">Go</button>
+            </form>
+        </div>
     </div>
 <#--    <div class="container">-->
 <#--        <div class="row">-->
