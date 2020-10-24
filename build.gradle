@@ -66,12 +66,16 @@ dependencies {
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2" // JVM dependency
     implementation "com.google.guava:guava:30.0-jre"
-    implementation files("/home/jesse/IdeaProjects/CopDetector/build/libs/CopDetector-1.0-SNAPSHOT-all.jar")
-
 }
 
 jar {
     manifest {
         attributes 'Class-Path': 'io.ktor.server.netty.EngineMain'
+    }
+}
+
+test {
+    doFirst {
+        processTestResources
     }
 }
